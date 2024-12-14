@@ -1,0 +1,30 @@
+name: Deploy to Local Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout kode dari repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Setup SSH Key untuk koneksi ke server
+      - name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Deploy kode ke server lokal
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd G:\Project\bagas-auto-deploy
+          git pull origin main
+          EOF
